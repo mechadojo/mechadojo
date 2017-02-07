@@ -2,7 +2,7 @@ package org.mechadojo.stateflow;
 
 import android.util.Log;
 
-import org.mechadojo.stateflow.messages.UpdateMessage;
+import org.mechadojo.utilities.RunningStatistics;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +39,8 @@ public class Controller extends StateFlowObject implements Runnable {
     public AtomicLong nextScopeId = new AtomicLong(1);
     public boolean running = false;
 
+    public RunningStatistics stats = new RunningStatistics();
+
     public void initialize() {
         for(Parameter p : parameters.values()) p.setController(this);
         for(ComponentLibrary cl : libraries.values()) cl.setController(this);
@@ -57,6 +59,7 @@ public class Controller extends StateFlowObject implements Runnable {
         cycleTime = getTime();
         handleMessages();
         cyclePeriod = getTime() - cycleTime;
+        stats.push(cyclePeriod / 1000000.0);
     }
 
     public void addMessage(MessageRoute msg)
@@ -67,8 +70,6 @@ public class Controller extends StateFlowObject implements Runnable {
             msg.message.timestamp = cycleTime;
         }
         messages.add(msg);
-
-
 
     }
 
@@ -208,8 +209,7 @@ public class Controller extends StateFlowObject implements Runnable {
      * Parameter Handling Methods
      */
 
-    public Message getParameter(String path)
-    {
+    public Message getParameter(String path) {
         Parameter p = parameters.get(path);
         if (p == null) return null;
         return p.getValue();
@@ -228,17 +228,17 @@ public class Controller extends StateFlowObject implements Runnable {
         p.setValue(source, value);
     }
 
-    public void updateParameter(String path, Message current, Message previous, boolean changed) {
-        MessageRoute msg = new MessageRoute();
-        msg.event = path;
-        msg.type = "update";
-        msg.message = new UpdateMessage(current, previous, changed);
-        addMessage(msg);
+    public void updateParameter(String path, Message msg) {
+        MessageRoute mr = new MessageRoute();
+        mr.event = path;
+        mr.type = "update";
+        mr.message = msg;
+        addMessage(mr);
     }
 
     public void handleTriggers(MessageRoute msg, Collection<MessageTrigger> triggers, Collection<MessageRoute> data) {
 
-        Log.d("StateFlow", "trigger: " + msg.event  );
+        //Log.d("StateFlow", "trigger: " + msg.event  );
         for (MessageTrigger trigger : triggers) {
             handleTrigger(msg, trigger, data);
         }
@@ -300,7 +300,7 @@ public class Controller extends StateFlowObject implements Runnable {
             msg.message.timestamp = cycleTime;
         }
 
-        log("debug", String.format("event: %s", msg.event), msg.message.serialize());
+        log("debug", "event", msg.event);
         messages.add(msg);
     }
 
@@ -311,6 +311,7 @@ public class Controller extends StateFlowObject implements Runnable {
     public void resetTime()
     {
         startTime = System.nanoTime();
+        stats.clear();
     }
     public long getTime()
     {

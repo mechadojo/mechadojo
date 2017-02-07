@@ -28,6 +28,7 @@ public class StateFlowOpMode extends OpMode {
         controller.resetTime();
         assignLog();
         controller.postEvent("opmode/init");
+
     }
 
     public void init_loop()
@@ -41,6 +42,7 @@ public class StateFlowOpMode extends OpMode {
     public void start()
     {
         startOpmodeTimer = controller.getSeconds();
+        controller.stats.clear();
         controller.postEvent("opmode/start");
         Collections.sort(timers);
     }
@@ -117,10 +119,16 @@ public class StateFlowOpMode extends OpMode {
     }
 
     public void updateInitTelemetry() {
-        telemetry.addData("Init Mode", String.format("%.2f", controller.getSeconds()));
+        double avg = controller.stats.mean();
+        double stddev = controller.stats.standardDeviation();
+
+        telemetry.addData("Init Mode", String.format("%.2f (%.2f msec σ: %.4f)", controller.getSeconds(), avg, stddev));
     }
 
     public void updateRunTelemetry() {
-        telemetry.addData("Run Mode", String.format("%.2f", controller.getSeconds() - startOpmodeTimer));
+        double avg = controller.stats.mean();
+        double stddev= controller.stats.standardDeviation();
+
+        telemetry.addData("Run Mode", String.format("%.2f (%.2f msec σ: %.4f)", controller.getSeconds() - startOpmodeTimer, avg, stddev));
     }
 }

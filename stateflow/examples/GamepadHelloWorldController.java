@@ -5,7 +5,6 @@ import org.mechadojo.stateflow.Controller;
 import org.mechadojo.stateflow.MessageHandler;
 import org.mechadojo.stateflow.MessageRoute;
 import org.mechadojo.stateflow.messages.GamepadMessage;
-import org.mechadojo.stateflow.messages.UpdateMessage;
 
 public class GamepadHelloWorldController extends Controller {
     public GamepadHelloWorldController() {
@@ -14,13 +13,7 @@ public class GamepadHelloWorldController extends Controller {
             .addComponent("hello/step_one", "OUT", "IN", new MessageHandler() {
                 @Override
                 public void handle(MessageRoute msg, Action action) {
-                    if (msg.message instanceof UpdateMessage)
-                    {
-                        MessageRoute mr = new MessageRoute(msg);
-                        mr.message = ((UpdateMessage)(msg.message)).current;
-
-                        action.next( mr );
-                    }
+                   action.next( msg );
                 }
             })
 

@@ -15,9 +15,9 @@ public class RunningStatistics {
     double m1;
     double m2;
 
-    void clear() { count = 0; m1 = 0; m2= 0; }
+    public void clear() { count = 0; m1 = 0; m2= 0; }
 
-    void push(double x) {
+    public void push(double x) {
         double delta, delta_n, delta_n2, term1;
 
         long n1 = count;
@@ -30,23 +30,23 @@ public class RunningStatistics {
         count++;
     }
 
-    double total() {
+    public double total() {
         return count;
     }
 
-    double mean() {
+    public double mean() {
         return count > 0 ? m1: 0;
     }
 
-    double variance() {
+    public double variance() {
         return count > 1 ? m2 / (count - 1.0) : 0;
     }
 
-    double standardDeviation() {
+    public double standardDeviation() {
         return Math.sqrt( variance() );
     }
 
-    static RunningStatistics add(RunningStatistics a, RunningStatistics b) {
+    public static RunningStatistics add(RunningStatistics a, RunningStatistics b) {
         RunningStatistics n = new RunningStatistics();
         n.count = a.count + b.count;
         double delta = b.m1 - a.m2;

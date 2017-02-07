@@ -6,25 +6,26 @@ public class Message {
     public long id;
     public String type;
     public long timestamp;
+    public Message previous;
 
     public String serialize()
     {
-        return String.format("%d : %s", id, type);
+        return String.format("{ id = %d, type = \"%s\", timestamp = %d }", id, type, timestamp);
     }
 
+    public Message() {}
+    public Message(Message msg) {
+        type = msg.type;
+        timestamp = msg.timestamp;
+    }
     public Message clone() {
-        Message m = new Message();
-        copyTo(m);
+        Message m = new Message(this);
         return m;
     }
 
-    public int compare(Message m) {
+    public int compare(Message msg) {
         return 0;
     }
 
-    public void copyTo(Message m) {
-        m.id = id;
-        m.type = type;
-        m.timestamp = timestamp;
-    }
+    public boolean hasChanged(Message msg) { return true; }
 }

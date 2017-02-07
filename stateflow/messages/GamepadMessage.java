@@ -67,7 +67,7 @@ public class GamepadMessage extends Message {
     public Message clone()
     {
         GamepadMessage m = new GamepadMessage();
-
+        m.timestamp = timestamp;
         m.left_stick_x = left_stick_x;
         m.left_stick_y = left_stick_y;
         m.right_stick_x = right_stick_x;
@@ -90,7 +90,6 @@ public class GamepadMessage extends Message {
         m.left_trigger = left_trigger;
         m.right_trigger = right_trigger;
 
-        copyTo(m);
         return m;
     }
 }

@@ -12,14 +12,11 @@ public class Parameter {
     public void setValue(String source, Message msg)
     {
         Message previous = value;
-        boolean changed = hasChanged(msg, previous );
+        msg.previous = previous;
         value = msg;
-        controller.updateParameter(path, msg, previous, changed);
-    }
-
-    public boolean hasChanged(Message current, Message previous)
-    {
-        return true;
+        if (msg.hasChanged(previous)) {
+            controller.updateParameter(path, msg);
+        }
     }
 
     public Message getValue()

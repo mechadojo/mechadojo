@@ -16,9 +16,7 @@ public class DoubleTriggerMessage extends Message {
 
     public Message clone()
     {
-        DoubleTriggerMessage m = new DoubleTriggerMessage(value, limit);
-        copyTo(m);
-        return m;
+        return new DoubleTriggerMessage(value, limit);
     }
 
     public String serialize() {
