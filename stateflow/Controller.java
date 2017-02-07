@@ -26,6 +26,8 @@ public class Controller extends StateFlowObject implements Runnable {
     ConcurrentHashMap<String, MessageTrigger> updateTriggers = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, MessageTrigger> timeTriggers = new ConcurrentHashMap<>();
 
+    ConcurrentHashMap<String, MessageLog> logs = new ConcurrentHashMap<>();
+
     public LogHandler logHandler;
 
     public long startTime;
@@ -72,6 +74,7 @@ public class Controller extends StateFlowObject implements Runnable {
         messages.add(msg);
 
     }
+
 
     public void addMessage(String target) {
         MessageRoute mr = MessageRoute.data(target);
@@ -234,8 +237,17 @@ public class Controller extends StateFlowObject implements Runnable {
         mr.type = "update";
         mr.message = msg;
         addMessage(mr);
+
+        for(MessageLog log : logs.values()) {
+            log.handle(path, msg);
+        }
     }
 
+    public void flushLogs() {
+        for(MessageLog log : logs.values()) {
+            log.flush();
+        }
+    }
     public void handleTriggers(MessageRoute msg, Collection<MessageTrigger> triggers, Collection<MessageRoute> data) {
 
         //Log.d("StateFlow", "trigger: " + msg.event  );
@@ -304,6 +316,18 @@ public class Controller extends StateFlowObject implements Runnable {
         messages.add(msg);
     }
 
+
+    public void addMessageLog(String name, MessageLog log) {
+        log.controller = this;
+        logs.put(name, log);
+    }
+
+    public void removeMessageLog(String name) {
+        MessageLog log = logs.remove(name);
+        if (log != null) {
+            log.flush();
+        }
+    }
     /*
      *  Time Methods
      */

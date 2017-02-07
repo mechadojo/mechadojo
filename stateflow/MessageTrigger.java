@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
 public class MessageTrigger extends MessageRoute {
     Pattern pattern;
 
-    public boolean eval(MessageRoute msg)
+    public boolean eval(String path, MessageRoute msg)
     {
-        if (pattern != null) {
-            Matcher m = pattern.matcher(msg.event);
+        if (pattern != null && path != null) {
+            Matcher m = pattern.matcher(path);
             if (!m.find()) {
                 return false;
             }
@@ -21,10 +21,9 @@ public class MessageTrigger extends MessageRoute {
         return condition.eval(msg);
     }
 
-    public boolean eval(Message msg)
+    public boolean eval(MessageRoute msg)
     {
-        message = msg;
-        return eval(this);
+        return eval(msg.event, msg);
     }
 
     public void reset()

@@ -69,6 +69,7 @@ public class StateFlowOpMode extends OpMode {
     public void stop()
     {
         controller.postEvent("opmode/stop");
+        controller.flushLogs();
     }
 
     public Controller loadController()

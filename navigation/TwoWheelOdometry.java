@@ -13,8 +13,8 @@ public class TwoWheelOdometry implements Runnable {
     public DcMotor leftMotor;
     public DcMotor rightMotor;
 
-    public EncoderMessage leftWheel = new EncoderMessage();
-    public EncoderMessage rightWheel = new EncoderMessage();
+    public EncoderMessage leftWheel = new EncoderMessage(1);
+    public EncoderMessage rightWheel = new EncoderMessage(2);
 
     public PositionMessage position = new PositionMessage();
 

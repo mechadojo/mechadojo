@@ -28,4 +28,12 @@ public class Message {
     }
 
     public boolean hasChanged(Message msg) { return true; }
+
+    public String getLogHeader() {
+        return "timestamp,id,type";
+    }
+
+    public String getLogRow() {
+        return String.format("%d,%d,%s", timestamp, id, type);
+    }
 }
