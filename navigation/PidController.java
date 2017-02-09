@@ -22,8 +22,12 @@ public class PidController {
     public double last;
     public double result;
 
+
     public double maxOutput = 1.0;
+
     public double maxResult = 1.0;
+    public double minResult = 0.0;
+
     public double maxSum = 1.0;
 
     public double update(double value, double dt, double last) {
@@ -47,6 +51,11 @@ public class PidController {
         result = last + output;
         if (result > maxResult) return maxResult;
         if (result < -maxResult) return -maxResult;
+
+        if (result> - minResult && output < minResult) {
+            if (result < 0) output = -minResult;
+            else result = minResult;
+        }
 
         return result;
     }

@@ -6,7 +6,10 @@ import android.util.Log;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.mechadojo.stateflow.Controller;
+import org.mechadojo.stateflow.ParameterRefresh;
 import org.mechadojo.utilities.RunningStatistics;
+
+import java.util.ArrayList;
 
 public class TwoWheelOdometry implements Runnable {
     public Controller controller;
@@ -34,8 +37,11 @@ public class TwoWheelOdometry implements Runnable {
     public long lastLoopStart;
 
     public RunningStatistics stats = new RunningStatistics();
-
+    public boolean reset = false;
     public boolean running = false;
+
+    public ArrayList<ParameterRefresh> updates = new ArrayList<>();
+
     @Override
     public void run() {
         Log.d("Navigation", "TwoWheelOdometry thread starting.");
@@ -50,8 +56,15 @@ public class TwoWheelOdometry implements Runnable {
             lastLoopStart = time;
             stats.push(loopPeriod / 1000000.0);
 
+            if (reset) zeroEncoders();
+
             sampleEncoders();
             updatePosition();
+
+            for(ParameterRefresh refresh : updates) {
+                refresh.update(controller);
+            }
+            reset = false;
 
             if (!running) break;
             try {
@@ -130,8 +143,8 @@ public class TwoWheelOdometry implements Runnable {
     }
 
     public void zeroEncoders() {
-        leftEncoderZero = leftMotor.getCurrentPosition();
-        rightEncoderZero = rightMotor.getCurrentPosition();
+        //leftEncoderZero = leftMotor.getCurrentPosition();
+        //rightEncoderZero = rightMotor.getCurrentPosition();
         leftWheel.position = 0.0;
         rightWheel.position = 0.0;
     }
