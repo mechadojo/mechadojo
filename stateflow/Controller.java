@@ -178,7 +178,12 @@ public class Controller extends StateFlowObject implements Runnable {
 
             // Every time a new Scope-Behavior-Action group is discovered then process the previous
             // group and start a new group
-            if (group == null || !msg.scope.equals(group.scope) || msg.action != group.action) {
+
+            long scopeId = msg.scope == null ? 0 : msg.scope.scopeId;
+            long groupScopeId = group == null || group.scope == null ? 0 : group.scope.scopeId;
+
+
+            if (group == null || (scopeId != groupScopeId) || msg.action != group.action) {
 
                 if (map.size() > 0)
                 {

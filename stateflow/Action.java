@@ -20,7 +20,7 @@ public class Action extends StateFlowObject implements Network {
 
 
     public void run(HashMap<String, ArrayList<MessageRoute>> messages) {
-      //  Log.d("StateFlow", "Run action: " + getPath());
+        //Log.d("StateFlow", "Run action: " + getPath());
 
         if (component == null && controller != null) {
             component = controller.getComponent(componentPath);
@@ -57,6 +57,7 @@ public class Action extends StateFlowObject implements Network {
      */
 
     public void undefined(String port, MessageRoute msg) {
+        controller.log("error", getPath(), String.format("Port not found: %s", port));
     }
 
     public void next(MessageRoute msg) {
@@ -69,6 +70,7 @@ public class Action extends StateFlowObject implements Network {
 
     public void out(String port, MessageRoute msg) {
         Connection output = connections.get(port);
+        //Log.d("StateFlow", "Send output message: " + port);
 
         boolean first = true;
 
@@ -76,6 +78,7 @@ public class Action extends StateFlowObject implements Network {
             msg.setSource(getOutputPath(port));
 
             for(MessagePath target : output.targets) {
+
                 MessageRoute next = !first || target.isBehaviorPort
                                     ? new  MessageRoute(msg, target)
                                     : msg.setTarget(target);
@@ -109,7 +112,7 @@ public class Action extends StateFlowObject implements Network {
     }
 
     public void postEvent(MessageRoute event) {
-
+        controller.postEvent(event);
     }
 
     @Override

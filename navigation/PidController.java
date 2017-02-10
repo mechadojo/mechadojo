@@ -14,6 +14,8 @@ public class PidController {
     public double errorRate;
     public double errorSum;
 
+    public double maxError = 0.0;
+    public double zeroPower = 0.0;
     public double kP = 0.0;
     public double kI = 0.0;
     public double kD = 0.0;
@@ -35,7 +37,7 @@ public class PidController {
         this.dt = dt;
         this.last = last;
 
-        double err = value - target;
+        double err = target - value;
 
         errorSum += err * dt;
         if (errorSum > maxSum) errorSum = maxSum;
@@ -44,7 +46,13 @@ public class PidController {
         errorRate = (err - error) / dt;
         error = err;
 
-        output = error * kP + errorSum * kI + errorRate * kD;
+        if (error > maxError || error < -maxError) {
+            if (error > maxError) output = maxOutput;
+            else output = -maxOutput;
+        } else {
+            output = zeroPower + error * kP + errorSum * kI + errorRate * kD;
+        }
+
         if (output > maxOutput) output = maxOutput;
         if (output < -maxOutput) output = -maxOutput;
 
@@ -52,8 +60,8 @@ public class PidController {
         if (result > maxResult) return maxResult;
         if (result < -maxResult) return -maxResult;
 
-        if (result> - minResult && output < minResult) {
-            if (result < 0) output = -minResult;
+        if (result > -minResult && result < minResult) {
+            if (result < 0) result = -minResult;
             else result = minResult;
         }
 

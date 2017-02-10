@@ -31,7 +31,7 @@ public class MessageRoute {
     public MessageRoute(MessageRoute msg, MessagePath target) {
         scope = msg.scope;
         source = msg.source;
-        target = target;
+        this.target = target;
         type = msg.type;
         event = msg.event;
         condition = msg.condition;

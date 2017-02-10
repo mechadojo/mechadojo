@@ -79,6 +79,8 @@ public class Behavior extends Component {
 
 
         String[] parts = path.split("->");
+
+        Log.d("StateFlow", "Parse Output:" + parts[0]);
         MessagePath outport = MessagePath.splitOutput(parts[0]);
 
         if (outport == null)
@@ -92,6 +94,8 @@ public class Behavior extends Component {
 
 
         for(int i=1;i<parts.length;i++) {
+            Log.d("StateFlow", "Parse Input:" + parts[i]);
+
             MessagePath inport = MessagePath.splitInput(parts[i]);
             if (inport == null) continue;
             inport.behavior = name;
@@ -134,6 +138,7 @@ public class Behavior extends Component {
             out = new Action();
             out.behavior = this;
             out.name = outport.action;
+            Log.d("StateFlow", "created action: " + out.name);
             actions.put(out.name, out);
 
 
@@ -171,6 +176,7 @@ public class Behavior extends Component {
         if (in == null) {
             in = new Action();
             in.name = inport.action;
+            Log.d("StateFlow", "created action: " + in.name);
             in.behavior = this;
             actions.put(in.name, in);
         }
